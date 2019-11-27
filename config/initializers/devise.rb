@@ -8,7 +8,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = '07bfadc659ce3e65e617caa8d1c32227ffe4abfa2aba9239dd481e73244d23ce041d31e7f683a42539183aa8e47f44c5ed6bea825755fdd01d60a79afbee9402'
+  # config.secret_key = '2005268e66815231454b6bb69272210705f7d6a320194b33cc25929a9dee30858d2453dec50dcb63740e4a46984b1efd1cf7cb7b02728020d200dd848f96a3fe'
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -114,7 +114,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 11
 
   # Set up a pepper to generate the hashed password.
-  # config.pepper = 'edec265b3896bc7871ce6ce5f3de7a8c16962558edaddcf81574055ee8e677d028ffc977a6d3237b6617b2a22179060238b8278f87031f10fdfb603cfa78b0c7'
+  # config.pepper = '0c07d2d03de1a4aa5bd0a9932537b719d3beda7d0879b5e11a7da1ae0b0fc876b3b867efbe5c20b0c673997d174af46658fb07c9e048bfdf5564a21a7b487373'
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false
@@ -178,6 +178,7 @@ Devise.setup do |config|
   # time the user will be asked for credentials again. Default is 30 minutes.
   # config.timeout_in = 30.minutes
 
+  config.omniauth :twitter, ENV['APP_ID'], ENV['APP_SECRET'], callback_url: ENV['CALLBACK_URL']
   # ==> Configuration for :lockable
   # Defines which strategy will be used to lock an account.
   # :failed_attempts = Locks an account after a number of failed attempts to sign in.
