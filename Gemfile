@@ -22,6 +22,8 @@ gem 'omniauth-twitter'
 gem 'devise'
 gem 'devise_token_auth'
 
+gem 'jwt'
+
 gem 'dotenv-rails'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
