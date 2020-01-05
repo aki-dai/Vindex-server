@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       
       resources :movies, only: [:create, :update]
       resources :tags, only: [:create, :update]
+      match '/movie_fetch/:youtubeID' => 'movies#fetch', via: [ :get, :post ]
     end
   end
   root 'home#about'

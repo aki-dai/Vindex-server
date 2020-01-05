@@ -6,13 +6,34 @@ class MoviesController < ApplicationController
            else
                render json: {"status":"already posted!"} and return
            end
-           redirect_to '/mypage'
+           render json: @movie
         end
         
         def update
         end
 
         def destroy
+        end
+
+        def fetch
+            data ={
+                "part": "snippet",
+                "id": params[:youtubeID],
+                "key": ENV['YOUTUBE_API_KEY']
+            }
+            query=data.to_query
+            uri = URI.parse("https://www.googleapis.com/youtube/v3/videos?"+query)
+            http = Net::HTTP.new(uri.host, uri.port)
+            http.use_ssl = true
+            req = Net::HTTP::Get.new(uri)
+            res = http.request(req)
+            res_data = JSON.parse(res.body)
+            
+            return_data = {
+                "title": res_data["items"][0]["snippet"]["title"],
+                "channelName": res_data["items"][0]["snippet"]["channelTitle"]
+            }
+            render :json => return_data
         end
 
         private
