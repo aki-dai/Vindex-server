@@ -4,27 +4,22 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #You should configure your model like this:
   #devise :omniauthable, omniauth_providers: [:twitter]
   include ActionView::Rendering
+  require './lib/token_provider'
+
+  attr_reader :current_user
   # You should also create an action method in this controller like this:
   def redirect_callbacks
     auth = request.env['omniauth.auth']
-    user_data = {
-      provider:   auth.provider,
-      uid:        auth.uid,
-      name:       auth.info.name,
-      nickname:   auth.info.nickname,
-      image:      auth.info.image,
-    } 
+    @user = User.from_omniauth(auth)
 
-    unless User.find_by(uid: auth.uid)
-      user = User.new(user_data)
-      user.save!
-    end
+    if @user.persisted?
+      tokens = Jwt::TokenProvider.refresh_tokens @user
+      redirect_path = "http://localhost:8000/auth?"+tokens.to_query
+    else
+      redirect_path = "http://localhost:8000/?login_error=1"
+    end 
 
-    response = {
-      success: true,
-      profile: user_data,
-    }
-    redirect_to 'http://localhost:8000/', success: true, profile: user_data 
+    redirect_to redirect_path
   end
 
   def omniauth_failure
