@@ -33,7 +33,7 @@ module TagtubeServer
         origins "*"
         resource "*",
           headers: :any,
-          methods: [:get, :post, :options, :head]
+          methods: [:get, :post, :options, :head, :put, :patch]
       end
     end
 

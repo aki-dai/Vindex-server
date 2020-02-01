@@ -2,7 +2,7 @@ class Users::OmniauthCallbacksController < DeviseTokenAuth::OmniauthCallbacksCon
     include ActionView::Rendering
     require './lib/token_provider'
     def show
-        payload = JWT::TokenProvider.decode(params[:access_token].split(".")[1])
+        payload = Jwt::TokenProvider.decode(params[:access_token].split(".")[1])
         if @user = User.find_by(provider: payload.provider, uid: payload.uid)
             user_data = {
                 userName: @user.name,

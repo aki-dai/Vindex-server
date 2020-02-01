@@ -11,7 +11,16 @@ class UsersController < ApplicationController
             }
             render json: {status: 'success', payload: user_data} and return
         else
-            render json: {status: 'failed', payload:{error: 'invalid access token', payload: payload[0]}} and return
+            render json: {status: 'failed', payload:{error: 'invalid access token', error_code: "001"}} and return
+        end
+    end
+
+    def update
+        if @user = User.find_by(refresh_token: params[:refresh_token])
+            new_access_token = Jwt::TokenProvider.refresh_access_token(@user)
+            render json: {status: 'success', payload: {access_token: new_access_token}} and return                        
+        else 
+            render json: {status: 'failed', payload:{error: 'invalid refresh token', error_code: "002"}} and return
         end
     end
 end

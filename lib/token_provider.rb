@@ -2,7 +2,18 @@ module Jwt
   class TokenProvider
     class << self
       def decode(token)
-          JWT.decode token, Rails.application.secrets.secret_key_base
+        JWT.decode token, Rails.application.secrets.secret_key_base
+      end
+
+      def refresh_access_token(user)
+        user_data = {
+          provider:   user.provider,
+          uid:        user.uid,
+          exp:        Time.current.to_i + 15.minutes
+        } 
+        access_token = issue_token(user_data)
+        
+        access_token
       end
 
       def refresh_tokens(user)

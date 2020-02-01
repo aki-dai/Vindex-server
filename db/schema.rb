@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_10_165811) do
+ActiveRecord::Schema.define(version: 2020_01_22_142654) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2020_01_10_165811) do
   create_table "movies", force: :cascade do |t|
     t.string "youtube_id"
     t.string "title"
-    t.integer "movie_length"
+    t.integer "duration"
     t.string "channel"
     t.time "post_time"
     t.string "thumnail"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2020_01_10_165811) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uid"
+    t.string "provider"
   end
 
   create_table "tags", force: :cascade do |t|
