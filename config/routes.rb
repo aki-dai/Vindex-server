@@ -8,8 +8,9 @@ Rails.application.routes.draw do
         omniauth_callbacks: 'users/omniauth_callbacks'
       }
       
-      resources :movies, only: [:create, :update]
+      resources :movies, only: [:create, :update, :show]
       resources :tags, only: [:create, :update]
+      get '/search' => 'search#show'
       get '/movie_fetch/:youtubeID' => 'movies#fetch' # via: [ :get, :post ]
       get '/users/' => 'users#show'
       put '/users/' => 'users#update'

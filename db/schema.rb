@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_22_142654) do
+ActiveRecord::Schema.define(version: 2020_02_11_153536) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,22 +21,42 @@ ActiveRecord::Schema.define(version: 2020_01_22_142654) do
     t.integer "duration"
     t.string "channel"
     t.time "post_time"
-    t.string "thumnail"
+    t.string "thumbnail"
     t.string "post_user"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "uid"
     t.string "provider"
+    t.integer "user_id"
+    t.index ["youtube_id"], name: "index_movies_on_youtube_id", unique: true
+  end
+
+  create_table "tag_categories", force: :cascade do |t|
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "tags_count", default: 0
+    t.index ["value"], name: "index_tag_categories_on_value", unique: true
+  end
+
+  create_table "tag_contributers", force: :cascade do |t|
+    t.string "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string "value"
-    t.integer "num"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "youtube_id"
-    t.string "uid"
-    t.string "user_name"
+    t.integer "tag_category_id"
+    t.integer "movie_id"
+    t.integer "latest_user_id"
+    t.index ["movie_id", "tag_category_id"], name: "index_tags_on_movie_id_and_tag_category_id", unique: true
+  end
+
+  create_table "tags_users", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "tag_id"
   end
 
   create_table "users", force: :cascade do |t|
