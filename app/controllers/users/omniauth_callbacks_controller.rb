@@ -14,9 +14,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     if @user.persisted?
       tokens = Jwt::TokenProvider.refresh_tokens @user
-      redirect_path = "http://localhost:8000/auth?"+tokens.to_query
+      redirect_path = "https://localhost:8000/auth?"+tokens.to_query
     else
-      redirect_path = "http://localhost:8000/?login_error=1"
+      redirect_path = "https://localhost:8000/?login_error=1"
     end 
 
     redirect_to redirect_path
