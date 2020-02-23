@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resources :movies, only: [:create, :update, :show]
       resources :tags, only: [:create, :update]
       get '/search' => 'search#show'
+      get '/search/latest' => 'search#latest'
       get '/movie_fetch/:youtubeID' => 'movies#fetch' # via: [ :get, :post ]
       get '/users/' => 'users#show'
       put '/users/' => 'users#update'

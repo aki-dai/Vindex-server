@@ -15,11 +15,13 @@ class MoviesController < ApplicationController
                 channel_name = res_data["items"][0]["snippet"]["channelTitle"]
                 thumbnail = res_data["items"][0]["snippet"]["thumbnails"]["medium"]["url"]
                 duration = res_data["items"][0]["contentDetails"]["duration"]
+                logger.debug(res_data)
                 logger.debug(duration)
+                length = parse_duration(duration)
                 @movie=Movie.create!({
                     youtube_id: params[:youtube_id],
                     title: title,
-                    duration: duration,
+                    duration: length,
                     channel: channel_name,
                     post_time: post_time,
                     thumbnail: thumbnail,
@@ -30,7 +32,8 @@ class MoviesController < ApplicationController
                 })                   
                 @user.movies << @movie
             end
-           
+            
+            #N+1
             params[:payload][:tags].each do |tag|
                 @tag_category = TagCategory.find_or_create_by(value: tag[:value])
                 @tag_category.movies << @movie
@@ -52,7 +55,7 @@ class MoviesController < ApplicationController
             @movie = Movie.find_by(youtube_id: params[:id])
             @tag = Tag.where(movie_id: @movie.id)
             @tag_return = []
-            @tag.each do |t|
+            @tag.includes([:user, :tag_category]).each do |t|
                 @user = User.find(t.latest_user_id)
                 @tag_category  = t.tag_category
                 @tag_return.push(tag_format(@user.uid, @user.name, @tag_category.value, @movie.youtube_id))
@@ -123,4 +126,6 @@ class MoviesController < ApplicationController
                 youtubeID: youtubeID,
             }
         end
+
+
 end
