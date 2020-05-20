@@ -1,3 +1,5 @@
+require "resolv-replace"
+
 def fetch_movie_data(youtube_id, fetch_type)
     if fetch_type == "post"
         query_data ={
@@ -12,13 +14,19 @@ def fetch_movie_data(youtube_id, fetch_type)
             "key": ENV['YOUTUBE_API_KEY']
         }
     end
-    logger.debug(query_data)
     query=query_data.to_query
     uri = URI.parse("https://www.googleapis.com/youtube/v3/videos?"+query)
     http = Net::HTTP.new(uri.host, uri.port)
+    http.open_timeout = 5
+    http.read_timeout = 5
     http.use_ssl = true
-    req = Net::HTTP::Get.new(uri)
-    res = http.request(req)
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    #http.get(uri)
+    res = http.get(uri)
     res_data = JSON.parse(res.body)
+    logger.debug(res_data)
+    #if res_data["items"][0]["status"]["privacyStatus"] == "unlisted"
+    #    return "unlisted"
+    #end
     return res_data
 end

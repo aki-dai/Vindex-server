@@ -9,6 +9,7 @@ class UsersController < ApplicationController
                 nickName: @user.nickname,
                 image:    @user.image,
             }
+            logger.debug(user_data)
             render json: {status: 'success', payload: user_data} and return
         else
             render json: {status: 'failed', payload:{error: 'invalid access token', error_code: "001"}} and return

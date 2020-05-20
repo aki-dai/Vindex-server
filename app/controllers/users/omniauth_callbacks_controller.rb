@@ -11,7 +11,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def redirect_callbacks
     auth = request.env['omniauth.auth']
     @user = User.from_omniauth(auth)
-
+    logger.debug([auth[:info][:name], auth[:info][:nickname], auth[:info][:image]])
+    @user.update(name: auth[:info][:name], nickname: auth[:info][:nickname], image: auth[:info][:image])
     if @user.persisted?
       tokens = Jwt::TokenProvider.refresh_tokens @user
       redirect_path = "https://localhost:8000/auth?"+tokens.to_query
