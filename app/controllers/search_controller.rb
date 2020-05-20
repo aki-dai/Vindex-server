@@ -1,19 +1,16 @@
 class SearchController < ApplicationController
     def show
-        @tagMatched = TagCategory.includes(movies: :tag_categories).find_by(value: params[:q])
+        @search_result = or_search(params[:q])
+
         results = []
-        if @tagMatched
-            @tagMatched.movies.each do |movie|
-                @movie = Movie.find(movie.id)
-                tags = get_tags_in_movie(movie)
-                results.push(createIndex(movie.youtube_id,
-                                        movie.channel,
-                                        movie.title,
-                                        movie.thumbnail,
-                                        tags))
-            end
+        @search_result.each do |movie|
+            tags = get_tags_in_movie(movie)
+            results.push(createIndex(movie.youtube_id,
+                                    movie.channel,
+                                    movie.title,
+                                    movie.thumbnail,
+                                    tags))
         end
-        results.reverse!
         @payload = {
             count: results.length,
             results: results
@@ -41,6 +38,49 @@ class SearchController < ApplicationController
     end
 
     private
+
+    def or_search(query)        
+        @query_tags = query.split(/\s+/)
+        match_movies = []
+        @query_tags.each do |tag|
+            @tagMatched = TagCategory.includes(movies: :tag_categories).find_by(value: tag)
+            if @tagMatched
+                @tagMatched.movies.each do |movie|
+                    match_movies.push(movie)
+                end
+            end
+        end
+        
+        match_movies.sort!{|a, b| (-1) * (a.id <=> b.id) }
+        match_movies.uniq!
+
+        return match_movies
+    end
+
+    def and_search(query)        
+        @query_tags = query.split(/\s+/)
+        match_movies = []
+        @query_tags.each_with_index do |tag, i|
+            temp = []
+            @tagMatched = TagCategory.includes(movies: :tag_categories).find_by(value: tag)
+            if @tagMatched
+                @tagMatched.movies.each do |movie|
+                    temp.push(movie)
+                end
+                if i == 0
+                    match_movies.concat(temp)
+                else
+                    match_movies = match_movies & temp
+                end
+            end
+        end
+        
+        match_movies.sort!{|a, b| (-1) * (a.id <=> b.id) }
+        match_movies.uniq!
+
+        return match_movies
+    end
+
 
     def createIndex(youtube_id, channel, title, thumbnail, tags)
         return {
