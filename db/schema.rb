@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_11_153536) do
+ActiveRecord::Schema.define(version: 2020_06_11_131809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(version: 2020_02_11_153536) do
     t.string "title"
     t.integer "duration"
     t.string "channel"
-    t.time "post_time"
     t.string "thumbnail"
     t.string "post_user"
     t.datetime "created_at", null: false
@@ -28,6 +27,7 @@ ActiveRecord::Schema.define(version: 2020_02_11_153536) do
     t.string "uid"
     t.string "provider"
     t.integer "user_id"
+    t.datetime "post_time"
     t.index ["youtube_id"], name: "index_movies_on_youtube_id", unique: true
   end
 

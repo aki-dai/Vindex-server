@@ -3,13 +3,13 @@ require "resolv-replace"
 def fetch_movie_data(youtube_id, fetch_type)
     if fetch_type == "post"
         query_data ={
-            "part": "snippet, contentDetails",
+            "part": "snippet, contentDetails, status",
             "id": youtube_id,
             "key": ENV['YOUTUBE_API_KEY']
         }
     else
         query_data ={
-            "part": "snippet",
+            "part": "snippet, status",
             "id": youtube_id,
             "key": ENV['YOUTUBE_API_KEY']
         }
@@ -24,9 +24,6 @@ def fetch_movie_data(youtube_id, fetch_type)
     #http.get(uri)
     res = http.get(uri)
     res_data = JSON.parse(res.body)
-    logger.debug(res_data)
-    #if res_data["items"][0]["status"]["privacyStatus"] == "unlisted"
-    #    return "unlisted"
-    #end
+    #logger.debug(status)
     return res_data
 end

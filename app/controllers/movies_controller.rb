@@ -8,18 +8,15 @@ class MoviesController < ApplicationController
             @user = User.find_by(provider: userData[0]["provider"], uid: userData[0]["uid"])
             @movie = Movie.find_by(youtube_id: params[:youtube_id])
             if !@movie
-                logger.debug(@user)
                 res_data = fetch_movie_data(params[:youtube_id], "post")
-                if res_data == "unlisted"
+                if res_data["items"][0]["status"]["privacyStatus"] == "unlisted"
                     return render json: {"status" => "failed", "message" => "Unlisted Movie", "error_code" => "021"}
                 end
                 title=res_data["items"][0]["snippet"]["title"]
-                post_time = res_data["items"][0]["snippet"]["publishedAt"]
+                post_time = DateTime.parse(res_data["items"][0]["snippet"]["publishedAt"])
                 channel_name = res_data["items"][0]["snippet"]["channelTitle"]
                 thumbnail = res_data["items"][0]["snippet"]["thumbnails"]["medium"]["url"]
                 duration = res_data["items"][0]["contentDetails"]["duration"]
-                logger.debug(res_data)
-                logger.debug(duration)
                 length = parse_duration(duration)
                 @movie=Movie.create!({
                     youtube_id: params[:youtube_id],
@@ -113,6 +110,7 @@ class MoviesController < ApplicationController
         end
 
         def destroy
+            
         end
 
         def fetch
@@ -134,6 +132,9 @@ class MoviesController < ApplicationController
             else
                 begin 
                     res_data = fetch_movie_data(params[:youtubeID], "fetch")
+                    #if res_data["items"][0]["status"]["privacyStatus"] == "unlisted"
+                    #    return render json: {"status" => "failed", "message" => "Unlisted Movie", "error_code" => "021"}
+                    #end
                     movie_data = {
                         "title": res_data["items"][0]["snippet"]["title"],
                         "channelName": res_data["items"][0]["snippet"]["channelTitle"],

@@ -1,19 +1,26 @@
 class SearchController < ApplicationController
     def show
-        @search_result = or_search(params[:q])
-
-        results = []
-        @search_result.each do |movie|
+        and_search = params[:a]
+        page = params[:p].to_i
+        sort = params[:s]
+        if(and_search == "true")
+            @search_result = and_search(params[:q], sort)
+        else 
+            @search_result = or_search(params[:q], sort)
+        end
+        res = []
+        search_result_range = @search_result[(page-1)*20...(page*20)]
+        search_result_range.each do |movie|
             tags = get_tags_in_movie(movie)
-            results.push(createIndex(movie.youtube_id,
+            res.push(createIndex(movie.youtube_id,
                                     movie.channel,
                                     movie.title,
                                     movie.thumbnail,
                                     tags))
         end
         @payload = {
-            count: results.length,
-            results: results
+            count: @search_result.length,
+            results: res
         }
         render json: {status: "success", payload: @payload}
     end
@@ -39,7 +46,7 @@ class SearchController < ApplicationController
 
     private
 
-    def or_search(query)        
+    def or_search(query, sort)        
         @query_tags = query.split(/\s+/)
         match_movies = []
         @query_tags.each do |tag|
@@ -57,7 +64,7 @@ class SearchController < ApplicationController
         return match_movies
     end
 
-    def and_search(query)        
+    def and_search(query, sort)        
         @query_tags = query.split(/\s+/)
         match_movies = []
         @query_tags.each_with_index do |tag, i|
