@@ -1,5 +1,14 @@
 version: '3'
 services:
+        db:
+          image: postgres
+          volumes:
+            - ./postgresql-data:/var/lib/postgresql/data
+          environment:
+            - "POSTGRES_USER=akidai"
+            - "POSTGRES_PASSWORD=Chemistry19931231"
+            - "POSTGRES_HOST=vindex-master.cf4gj4qum9qn.ap-northeast-1.rds.amazonaws.com"
+
         app:
            build:
                 context: .
@@ -14,12 +23,3 @@ services:
            stdin_open: true
            links: 
             - db
-           command: bundle exec rails s -p 3000 -b '0.0.0.0'
-        
-        db:
-          image: postgres
-          volumes:
-            - ./postgresql-data:/var/lib/postgresql/data
-          environment:
-            - "POSTGRES_USER=akidai"
-            - "POSTGRES_PASSWORD=Chemistry19931231"

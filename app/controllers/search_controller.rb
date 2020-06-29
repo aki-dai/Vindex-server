@@ -10,6 +10,9 @@ class SearchController < ApplicationController
         end
         res = []
         search_result_range = @search_result[(page-1)*20...(page*20)]
+        if !search_result_range
+            search_result_range = []
+        end
         search_result_range.each do |movie|
             tags = get_tags_in_movie(movie)
             res.push(createIndex(movie.youtube_id,
@@ -57,8 +60,16 @@ class SearchController < ApplicationController
                 end
             end
         end
-        
-        match_movies.sort!{|a, b| (-1) * (a.id <=> b.id) }
+        case sort
+            when "latest"
+                match_movies.sort!{|a, b| (-1) * (a.id <=> b.id) }
+            when "duration"
+                match_movies.sort!{|a, b| (-1) * (a.duration <=> b.duration) }
+            when "new_post"                
+                match_movies.sort!{|a, b| (-1) * (a.post_time <=> b.post_time) }
+            else
+                match_movies.sort!{|a, b| (-1) * (a.id <=> b.id) }
+        end 
         match_movies.uniq!
 
         return match_movies
